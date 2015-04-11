@@ -15,10 +15,6 @@ build-type:      Simple
 homepage:        http://github.com/yesodweb/clientsession/tree/master
 extra-source-files: tests/runtests.hs bench.hs
 
-flag test
-  description: Build the executable to run unit tests
-  default: False
-
 executable clientsession-generate
     main-is: generate.hs
     build-depends:   base
