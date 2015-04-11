@@ -105,12 +105,8 @@ import Crypto.Skein (skeinMAC', Skein_512_256)
 import System.Entropy (getEntropy)
 
 -- from cprng-aes
-#if MIN_VERSION_cprng_aes(0,5,0)
 import Crypto.Random.AESCtr (AESRNG, makeSystem)
 import "crypto-random" Crypto.Random (cprgGenerate)
-#else
-import Crypto.Random.AESCtr (AESRNG, makeSystem, genRandomBytes)
-#endif
 
 
 -- | The keys used to store the cookies.  We have an AES key used
@@ -342,13 +338,7 @@ aesRNG :: IO IV
 aesRNG = do
   (bs, count) <-
       I.atomicModifyIORef aesRef $ \(ASt rng count) ->
-#if MIN_VERSION_cprng_aes(0, 5, 0)
           let (bs', rng') = cprgGenerate 16 rng
-#elif MIN_VERSION_cprng_aes(0, 3, 2)
-          let (bs', rng') = genRandomBytes 16 rng
-#else
-          let (bs', rng') = genRandomBytes rng 16
-#endif
           in (ASt rng' (succ count), (bs', count))
   when (count == threshold) $ void $ forkIO aesReseed
   return $! unsafeMkIV bs
