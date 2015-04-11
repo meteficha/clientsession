@@ -1,12 +1,14 @@
 import qualified Data.ByteString as B
 import Web.ClientSession
 import Data.Maybe
-import Data.Serialize
 
 import Criterion.Main
 import Text.Printf
 
-Right key = initKey (B.replicate 96 0xFE)
+key :: Key
+Right key = initKey (B.replicate 32 0xFE)
+
+iv :: IV
 Just iv = mkIV (B.replicate 16 0xB0)
 
 main :: IO ()
