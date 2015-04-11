@@ -37,7 +37,7 @@ library
                    , base64-bytestring   >= 0.1.1.1
                    , entropy             >= 0.2.1
                    , cprng-aes           >= 0.2
-                   , cipher-aes          >= 0.1.7
+                   , cipher-aes          >= 0.2
                    , crypto-random
                    , setenv
     exposed-modules: Web.ClientSession

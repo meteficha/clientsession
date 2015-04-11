@@ -121,11 +121,7 @@ import Crypto.Random.AESCtr (AESRNG, makeSystem, genRandomBytes)
 --
 -- See also 'getDefaultKey' and 'initKey'.
 data Key = Key { aesKey ::
-#if MIN_VERSION_cipher_aes(0, 2, 0)
                     !A.AES
-#else
-                    !A.Key
-#endif
                  -- ^ AES key with 32 bytes.
                , macKey :: !(S.ByteString -> Skein_512_256)
                  -- ^ Skein-MAC key.  Instead of storing the key
@@ -288,11 +284,7 @@ encrypt :: Key          -- ^ Key of the server.
                         -- the client browser.
 encrypt key (IV iv) x = B.encode final
   where
-#if MIN_VERSION_cipher_aes(0, 2, 0)
     encrypted  = A.encryptCTR (aesKey key) iv x
-#else
-    encrypted  = A.encryptCTR (aesKey key) (A.IV iv) x
-#endif
     toBeAuthed = iv `S.append` encrypted
     auth       = macKey key toBeAuthed
     final      = encode auth `S.append` toBeAuthed
@@ -311,11 +303,7 @@ decrypt key dataBS64 = do
         auth' = macKey key toBeAuthed
     guard (encode auth' `constTimeEq` auth)
     let (iv, encrypted) = S.splitAt 16 toBeAuthed
-#if MIN_VERSION_cipher_aes(0, 2, 0)
     let iv' = iv
-#else
-    let iv' = A.IV iv
-#endif
     return $! A.decryptCTR (aesKey key) iv' encrypted
 
 
